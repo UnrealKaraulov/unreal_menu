@@ -202,7 +202,7 @@ public TEST_CALL_MENU2(int,str[],Float:flt,id)
 
 public CALL_MENU(id, vmenu, item)
 {
-	if(item == MENU_EXIT || !is_user_connected(id) || !is_user_alive(id)) 
+	if(item == MENU_EXIT || !is_user_connected(id)) 
 	{
 		menu_destroy(vmenu);
 		return PLUGIN_HANDLED;
