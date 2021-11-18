@@ -11,7 +11,7 @@ new g_sMenuItemCount[MAX_CMDS] = {0,...};
  
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.4", "karaulov");
+	register_plugin("Unreal Menu", "1.5", "karaulov");
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
@@ -34,6 +34,9 @@ public plugin_init()
 		register_clcmd(tmpFileName,tmpCmdName);
 		formatex(tmpFullFileName,charsmax(tmpFullFileName),"say /%s",tmpFileName);
 		register_clcmd(tmpFullFileName,tmpCmdName);
+		
+		log_amx("Register new menu with cmd: ^"%s^" and ^"say /%s^". Called function: ^"%s^".", tmpFileName,tmpFileName,tmpCmdName);
+		
 		formatex(tmpFullFileName,charsmax(tmpFullFileName),"%s/unrealmenu/%s.txt",tmpConfigDir,tmpFileName);
 		
 		new szParse[MAX_MENUITEM_LEN + MAX_MENUITEM_LEN];
@@ -57,6 +60,8 @@ public plugin_init()
 			g_sMenuItemCount[tmpCmdID]++;
 		}
 		
+		log_amx("Menu items: %i",iLine);
+		
 		tmpCmdID++;
 		if (tmpCmdID == 32)
 			break;
@@ -75,11 +80,15 @@ public CALL_CMD(id,cmdid)
 	format(tmpmenuitem,charsmax(tmpmenuitem),"%s", g_sMenuNames[cmdid - 1]);
 		
 	new vmenu = menu_create(tmpmenuitem, "CALL_MENU")
-
+	
 	
 	for(new i = 0; i < g_sMenuItemCount[cmdid - 1 ];i++)
 	{
-		if (g_sMenuFlags[cmdid - 1][i] == 0 || (get_user_flags(id) & g_sMenuFlags[cmdid - 1][i]))
+		if (strlen(g_sMenus[cmdid - 1][0][i]) == 0)
+		{
+			menu_addblank(vmenu,0);
+		}
+		else if (g_sMenuFlags[cmdid - 1][i] == 0 || (get_user_flags(id) & g_sMenuFlags[cmdid - 1][i]))
 		{
 			num_to_str(i,tmpmenuid,charsmax(tmpmenuid));
 			menu_additem(vmenu, g_sMenus[cmdid - 1][0][i],tmpmenuid);
@@ -227,7 +236,7 @@ public cmd2(id)
 
 public cmd3(id)
 {
-	return CALL_CMD(id,4);
+	return CALL_CMD(id,3);
 }
 
 public cmd4(id)
