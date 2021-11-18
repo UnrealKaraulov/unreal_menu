@@ -1,0 +1,5 @@
+РАДИО МЕНУ
+Текущее время=say thetime
+Время карты=say timeleft
+ADMIN_LEVEL_G=Написать /HP=say /hp
+Написать /ME=say /me
