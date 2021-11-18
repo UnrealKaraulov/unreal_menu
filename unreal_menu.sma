@@ -32,6 +32,8 @@ public plugin_init()
 		tmpFileName[strlen(tmpFileName) - 4] = '^0';
 		formatex(tmpCmdName,charsmax(tmpCmdName),"cmd%i",tmpCmdID + 1);
 		register_clcmd(tmpFileName,tmpCmdName);
+		formatex(tmpFullFileName,charsmax(tmpFullFileName),"say /%s",tmpFileName);
+		register_clcmd(tmpFullFileName,tmpCmdName);
 		formatex(tmpFullFileName,charsmax(tmpFullFileName),"%s/unrealmenu/%s.txt",tmpConfigDir,tmpFileName);
 		
 		new szParse[MAX_MENUITEM_LEN + MAX_MENUITEM_LEN];
