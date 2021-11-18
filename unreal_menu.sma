@@ -6,11 +6,12 @@ const MAX_MENU_ITEMS = 64;
 const MAX_MENUITEM_LEN = 512;
 new g_sMenus[MAX_CMDS][2][MAX_MENU_ITEMS][MAX_MENUITEM_LEN];
 new g_sMenuNames[MAX_CMDS][MAX_MENUITEM_LEN];
+new g_sMenuFlags[MAX_CMDS][MAX_MENU_ITEMS];
 new g_sMenuItemCount[MAX_CMDS] = {0,...};
  
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.3", "karaulov");
+	register_plugin("Unreal Menu", "1.4", "karaulov");
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
@@ -40,6 +41,16 @@ public plugin_init()
 		
 		for(iLine = 1; read_file(tmpFullFileName, iLine, szParse, charsmax( szParse ), iNum); iLine++)
 		{
+			g_sMenuFlags[tmpCmdID][iLine-1] = 0;
+			if (containi(szParse,"ADMIN_") == 0)
+			{
+				split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),g_sMenus[tmpCmdID][1][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),"=");
+				if (is_str_flag(g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]]))
+				{
+					split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),szParse,charsmax(szParse),"=");
+					g_sMenuFlags[tmpCmdID][iLine-1] = str_to_flag(g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]]);
+				}
+			}
 			split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),g_sMenus[tmpCmdID][1][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),"=");
 			g_sMenuItemCount[tmpCmdID]++;
 		}
@@ -59,14 +70,23 @@ public CALL_CMD(id,cmdid)
 	new tmpmenuitem[MAX_MENUITEM_LEN];
 	new tmpmenuid[32];
 	
-	format(tmpmenuitem,charsmax(tmpmenuitem),"[Menu]: %s", g_sMenuNames[cmdid - 1]);
+	format(tmpmenuitem,charsmax(tmpmenuitem),"%s", g_sMenuNames[cmdid - 1]);
 		
 	new vmenu = menu_create(tmpmenuitem, "CALL_MENU")
 
+	
 	for(new i = 0; i < g_sMenuItemCount[cmdid - 1 ];i++)
 	{
-		num_to_str(i,tmpmenuid,charsmax(tmpmenuid));
-		menu_additem(vmenu, g_sMenus[cmdid - 1][0][i],tmpmenuid);
+		if (g_sMenuFlags[cmdid - 1][i] == 0 || (get_user_flags(id) & g_sMenuFlags[cmdid - 1][i]))
+		{
+			num_to_str(i,tmpmenuid,charsmax(tmpmenuid));
+			menu_additem(vmenu, g_sMenus[cmdid - 1][0][i],tmpmenuid);
+		}
+		else 
+		{
+			format(tmpmenuitem,charsmax(tmpmenuitem),"\d%s", g_sMenus[cmdid - 1][0][i]);
+			menu_additem(vmenu, tmpmenuitem, "-1");
+		}
 	}
 
 	
@@ -181,9 +201,15 @@ public CALL_MENU(id, vmenu, item)
 	menu_item_getinfo(vmenu, item, access, data, charsmax(data), iName, charsmax(iName), callback)
 	     
 	new cmdid = str_to_num(data)
-	EXECUTE_COMMAND(id, g_sMenus[LAST_CALLED_CMD[id]][1][cmdid]);
-	
 	menu_destroy(vmenu);
+	if (cmdid == -1)
+	{
+		CALL_CMD(id,LAST_CALLED_CMD[id] + 1);
+	}
+	else 
+	{
+		EXECUTE_COMMAND(id, g_sMenus[LAST_CALLED_CMD[id]][1][cmdid]);
+	}
 	return PLUGIN_HANDLED;
 }
 
@@ -400,4 +426,64 @@ stock split2(const szInput[], szLeft[], sL_Max, szRight[], sR_Max, const szDelim
 	szLeft[i] = '^0';
 	copy(szRight,sR_Max,szInput[i + 1]);
 	return 1;
+}
+
+stock bool:is_str_flag(const flagtest[])
+{
+if ( equal(flagtest, "ADMIN_ALL") ) return true;
+if ( equal(flagtest, "ADMIN_IMMUNITY") ) return true;
+if ( equal(flagtest, "ADMIN_RESERVATION") ) return true;
+if ( equal(flagtest, "ADMIN_KICK") ) return true;
+if ( equal(flagtest, "ADMIN_BAN") ) return true;
+if ( equal(flagtest, "ADMIN_SLAY") ) return true;
+if ( equal(flagtest, "ADMIN_MAP") ) return true;
+if ( equal(flagtest, "ADMIN_CVAR") ) return true;
+if ( equal(flagtest, "ADMIN_CFG") ) return true;
+if ( equal(flagtest, "ADMIN_CHAT") ) return true;
+if ( equal(flagtest, "ADMIN_VOTE") ) return true;
+if ( equal(flagtest, "ADMIN_PASSWORD") ) return true;
+if ( equal(flagtest, "ADMIN_RCON") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_A") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_B") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_C") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_D") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_E") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_F") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_G") ) return true;
+if ( equal(flagtest, "ADMIN_LEVEL_H") ) return true;
+if ( equal(flagtest, "ADMIN_MENU") ) return true;
+if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return true;
+if ( equal(flagtest, "ADMIN_ADMIN") ) return true;
+if ( equal(flagtest, "ADMIN_USER") ) return true;
+return false;
+}
+
+stock str_to_flag(const flagtest[])
+{
+if ( equal(flagtest, "ADMIN_ALL") ) return 0;
+if ( equal(flagtest, "ADMIN_IMMUNITY") ) return (1<<0);
+if ( equal(flagtest, "ADMIN_RESERVATION") ) return (1<<1);
+if ( equal(flagtest, "ADMIN_KICK") ) return (1<<2);
+if ( equal(flagtest, "ADMIN_BAN") ) return (1<<3);
+if ( equal(flagtest, "ADMIN_SLAY") ) return (1<<4);
+if ( equal(flagtest, "ADMIN_MAP") ) return (1<<5);
+if ( equal(flagtest, "ADMIN_CVAR") ) return (1<<6);
+if ( equal(flagtest, "ADMIN_CFG") ) return (1<<7);
+if ( equal(flagtest, "ADMIN_CHAT") ) return (1<<8);
+if ( equal(flagtest, "ADMIN_VOTE") ) return (1<<9);
+if ( equal(flagtest, "ADMIN_PASSWORD") ) return (1<<10);
+if ( equal(flagtest, "ADMIN_RCON") ) return (1<<11);
+if ( equal(flagtest, "ADMIN_LEVEL_A") ) return (1<<12);
+if ( equal(flagtest, "ADMIN_LEVEL_B") ) return (1<<13);
+if ( equal(flagtest, "ADMIN_LEVEL_C") ) return (1<<14);
+if ( equal(flagtest, "ADMIN_LEVEL_D") ) return (1<<15);
+if ( equal(flagtest, "ADMIN_LEVEL_E") ) return (1<<16);
+if ( equal(flagtest, "ADMIN_LEVEL_F") ) return (1<<17);
+if ( equal(flagtest, "ADMIN_LEVEL_G") ) return (1<<18);
+if ( equal(flagtest, "ADMIN_LEVEL_H") ) return (1<<19);
+if ( equal(flagtest, "ADMIN_MENU") ) return (1<<20);
+if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return (1<<21);
+if ( equal(flagtest, "ADMIN_ADMIN") ) return (1<<24);
+if ( equal(flagtest, "ADMIN_USER") ) return (1<<25);
+return 0;
 }
