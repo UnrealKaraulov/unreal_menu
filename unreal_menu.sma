@@ -10,7 +10,7 @@ new g_sMenuItemCount[MAX_CMDS] = {0,...};
  
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.1", "karaulov");
+	register_plugin("Unreal Menu", "1.3", "karaulov");
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
@@ -31,13 +31,14 @@ public plugin_init()
 		tmpFileName[strlen(tmpFileName) - 4] = '^0';
 		formatex(tmpCmdName,charsmax(tmpCmdName),"cmd%i",tmpCmdID + 1);
 		register_clcmd(tmpFileName,tmpCmdName);
-		copy(g_sMenuNames[tmpCmdID],charsmax(g_sMenuNames[]),tmpFileName);
 		formatex(tmpFullFileName,charsmax(tmpFullFileName),"%s/unrealmenu/%s.txt",tmpConfigDir,tmpFileName);
 		
 		new szParse[MAX_MENUITEM_LEN + MAX_MENUITEM_LEN];
-		new iLine, iNum;
+		new iLine = 0, iNum;
 		
-		for(iLine = 0; read_file(tmpFullFileName, iLine, szParse, charsmax( szParse ), iNum); iLine++)
+		read_file(tmpFullFileName, iLine, g_sMenuNames[tmpCmdID], charsmax( g_sMenuNames[] ), iNum);
+		
+		for(iLine = 1; read_file(tmpFullFileName, iLine, szParse, charsmax( szParse ), iNum); iLine++)
 		{
 			split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),g_sMenus[tmpCmdID][1][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),"=");
 			g_sMenuItemCount[tmpCmdID]++;

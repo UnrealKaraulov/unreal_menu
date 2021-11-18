@@ -1,3 +1,4 @@
+МЕНЮ СЕРВЕРА
 ME2=say /me
 HP2=say /hp
 TEST=say /test
