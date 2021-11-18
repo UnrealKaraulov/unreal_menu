@@ -99,11 +99,10 @@ public CALL_CMD(id,cmdid)
 			menu_additem(vmenu, tmpmenuitem, "-1");
 		}
 	}
-
 	
-	menu_setprop(vmenu, MPROP_NEXTNAME, "\yДAЛEE");
-	menu_setprop(vmenu, MPROP_BACKNAME, "\yHA3AД");
-	menu_setprop(vmenu, MPROP_EXITNAME, "\rBЫXOД");
+	menu_setprop(vmenu, MPROP_NEXTNAME, "Далее");
+	menu_setprop(vmenu, MPROP_BACKNAME, "Назад");
+	menu_setprop(vmenu, MPROP_EXITNAME, "Выход");
 	menu_setprop(vmenu, MPROP_EXIT,MEXIT_ALL);
 	
 	menu_display(id,vmenu,0);
