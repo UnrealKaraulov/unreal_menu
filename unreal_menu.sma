@@ -7,10 +7,10 @@ const MAX_MENUITEM_LEN = 512;
 new g_sMenus[MAX_CMDS][2][MAX_MENU_ITEMS][MAX_MENUITEM_LEN];
 new g_sMenuNames[MAX_CMDS][MAX_MENUITEM_LEN];
 new g_sMenuItemCount[MAX_CMDS] = {0,...};
-
+ 
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.0", "karaulov");
+	register_plugin("Unreal Menu", "1.1", "karaulov");
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
@@ -188,202 +188,202 @@ public CALL_MENU(id, vmenu, item)
 
 public cmd1(id)
 {
-	CALL_CMD(id,1);
+	return CALL_CMD(id,1);
 }
 
 public cmd2(id)
 {
-	CALL_CMD(id,2);
+	return CALL_CMD(id,2);
 }
 
 public cmd3(id)
 {
-	CALL_CMD(id,4);
+	return CALL_CMD(id,4);
 }
 
 public cmd4(id)
 {
-	CALL_CMD(id,4);
+	return CALL_CMD(id,4);
 }
 
 public cmd5(id)
 {
-	CALL_CMD(id,5);
+	return CALL_CMD(id,5);
 }
 
 public cmd6(id)
 {
-	CALL_CMD(id,6);
+	return CALL_CMD(id,6);
 }
 
 public cmd7(id)
 {
-	CALL_CMD(id,7);
+	return CALL_CMD(id,7);
 }
 
 public cmd8(id)
 {
-	CALL_CMD(id,8);
+	return CALL_CMD(id,8);
 }
 
 public cmd9(id)
 {
-	CALL_CMD(id,9);
+	return CALL_CMD(id,9);
 }
 
 public cmd10(id)
 {
-	CALL_CMD(id,10);
+	return CALL_CMD(id,10);
 }
 
 public cmd11(id)
 {
-	CALL_CMD(id,11);
+	return CALL_CMD(id,11);
 }
 
 public cmd12(id)
 {
-	CALL_CMD(id,12);
+	return CALL_CMD(id,12);
 }
 
 public cmd13(id)
 {
-	CALL_CMD(id,13);
+	return CALL_CMD(id,13);
 }
 
 public cmd14(id)
 {
-	CALL_CMD(id,14);
+	return CALL_CMD(id,14);
 }
 
 public cmd15(id)
 {
-	CALL_CMD(id,15);
+	return CALL_CMD(id,15);
 }
 
 public cmd16(id)
 {
-	CALL_CMD(id,16);
+	return CALL_CMD(id,16);
 }
 
 public cmd17(id)
 {
-	CALL_CMD(id,17);
+	return CALL_CMD(id,17);
 }
 
 public cmd18(id)
 {
-	CALL_CMD(id,18);
+	return CALL_CMD(id,18);
 }
 
 public cmd19(id)
 {
-	CALL_CMD(id,19);
+	return CALL_CMD(id,19);
 }
 
 public cmd20(id)
 {
-	CALL_CMD(id,20);
+	return CALL_CMD(id,20);
 }
 
 public cmd21(id)
 {
-	CALL_CMD(id,21);
+	return CALL_CMD(id,21);
 }
 
 public cmd22(id)
 {
-	CALL_CMD(id,22);
+	return CALL_CMD(id,22);
 }
 
 public cmd23(id)
 {
-	CALL_CMD(id,23);
+	return CALL_CMD(id,23);
 }
 
 public cmd24(id)
 {
-	CALL_CMD(id,24);
+	return CALL_CMD(id,24);
 }
 
 public cmd25(id)
 {
-	CALL_CMD(id,25);
+	return CALL_CMD(id,25);
 }
 
 public cmd26(id)
 {
-	CALL_CMD(id,26);
+	return CALL_CMD(id,26);
 }
 
 public cmd27(id)
 {
-	CALL_CMD(id,27);
+	return CALL_CMD(id,27);
 }
 
 public cmd28(id)
 {
-	CALL_CMD(id,28);
+	return CALL_CMD(id,28);
 }
 
 public cmd29(id)
 {
-	CALL_CMD(id,29);
+	return CALL_CMD(id,29);
 }
 
 public cmd30(id)
 {
-	CALL_CMD(id,30);
+	return CALL_CMD(id,30);
 }
 
 public cmd31(id)
 {
-	CALL_CMD(id,31);
+	return CALL_CMD(id,31);
 }
 
 public cmd32(id)
 {
-	CALL_CMD(id,32);
+	return CALL_CMD(id,32);
 }
 
 public cmd33(id)
 {
-	CALL_CMD(id,33);
+	return CALL_CMD(id,33);
 }
 
 public cmd34(id)
 {
-	CALL_CMD(id,34);
+	return CALL_CMD(id,34);
 }
 
 public cmd35(id)
 {
-	CALL_CMD(id,35);
+	return CALL_CMD(id,35);
 }
 
 public cmd36(id)
 {
-	CALL_CMD(id,36);
+	return CALL_CMD(id,36);
 }
 
 public cmd37(id)
 {
-	CALL_CMD(id,37);
+	return CALL_CMD(id,37);
 }
 
 public cmd38(id)
 {
-	CALL_CMD(id,38);
+	return CALL_CMD(id,38);
 }
 
 public cmd39(id)
 {
-	CALL_CMD(id,39);
+	return CALL_CMD(id,39);
 }
 
 public cmd40(id)
 {
-	CALL_CMD(id,40);
+	return CALL_CMD(id,40);
 }
 
 stock split2(const szInput[], szLeft[], sL_Max, szRight[], sR_Max, const szDelim[])
