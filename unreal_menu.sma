@@ -8,10 +8,11 @@ new g_sMenus[MAX_CMDS][2][MAX_MENU_ITEMS][MAX_MENUITEM_LEN];
 new g_sMenuNames[MAX_CMDS][MAX_MENUITEM_LEN];
 new g_sMenuFlags[MAX_CMDS][MAX_MENU_ITEMS];
 new g_sMenuItemCount[MAX_CMDS] = {0,...};
- 
+//#define DEBUG
+
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.5", "karaulov");
+	register_plugin("Unreal Menu", "1.6", "karaulov");
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
@@ -58,6 +59,12 @@ public plugin_init()
 			}
 			split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),g_sMenus[tmpCmdID][1][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),"=");
 			g_sMenuItemCount[tmpCmdID]++;
+			
+			if (iLine >= MAX_MENU_ITEMS)
+			{
+				log_error(AMX_ERR_PARAMS,"Items limit is exceeded. Please check ^"%s^" file",tmpFullFileName);
+				break;
+			}
 		}
 		
 		log_amx("Menu items: %i",iLine);
@@ -73,6 +80,16 @@ new LAST_CALLED_CMD[MAX_PLAYERS + 1] = {0, ...};
 
 public CALL_CMD(id,cmdid)
 {
+	if(!is_user_connected(id)) 
+	{
+		return PLUGIN_HANDLED;
+	}
+		#if defined DEBUG
+			new username[33];
+			get_user_name(id,username,charsmax(username));
+			log_amx("[DEBUG] User %s call menu %s.", username, g_sMenuNames[cmdid - 1]);
+		#endif
+	
 	LAST_CALLED_CMD[id] = cmdid - 1;
 	new tmpmenuitem[MAX_MENUITEM_LEN];
 	new tmpmenuid[32];
@@ -80,7 +97,6 @@ public CALL_CMD(id,cmdid)
 	format(tmpmenuitem,charsmax(tmpmenuitem),"%s", g_sMenuNames[cmdid - 1]);
 		
 	new vmenu = menu_create(tmpmenuitem, "CALL_MENU")
-	
 	
 	for(new i = 0; i < g_sMenuItemCount[cmdid - 1 ];i++)
 	{
@@ -99,6 +115,7 @@ public CALL_CMD(id,cmdid)
 			menu_additem(vmenu, tmpmenuitem, "-1");
 		}
 	}
+	
 	menu_setprop(vmenu, MPROP_PERPAGE, 6)
 	menu_setprop(vmenu, MPROP_NEXTNAME, "Далее");
 	menu_setprop(vmenu, MPROP_BACKNAME, "Назад");
@@ -131,20 +148,61 @@ public EXECUTE_COMMAND(id, const cmd[])
 	}
 	else if (containi(cmd,"EXECUTE_WITH_ARGS:") == 0)
 	{
+		new funcRealID=-1;
 		new tmpFuncName[64];
+		new tmpPlugName[64];
+		new tmpFuncName2[64];
 		new tmpArgType[32];
 		new tmpArgValue[MAX_MENUITEM_LEN];
 		new tmpLeftPart[MAX_MENUITEM_LEN];
 		new tmpRigtPart[MAX_MENUITEM_LEN];
 		split2(cmd,tmpLeftPart,charsmax(tmpLeftPart),tmpRigtPart,charsmax(tmpRigtPart),":");
 		split2(tmpRigtPart,tmpFuncName,charsmax(tmpFuncName),tmpLeftPart,charsmax(tmpLeftPart),":"); 
-		new num_of_plugins = get_pluginsnum()
+		funcRealID = str_to_num(tmpFuncName);
+		num_to_str(funcRealID,tmpFuncName2,charsmax(tmpFuncName2));
+		
+		if (!equal(tmpFuncName,tmpFuncName2))
+		{
+			funcRealID = -1;
+			split2(tmpLeftPart,tmpPlugName,charsmax(tmpPlugName),tmpArgValue,charsmax(tmpArgValue),":"); 
+			if (containi(tmpPlugName,".amx") > 0)
+			{
+				split2(tmpLeftPart,tmpPlugName,charsmax(tmpPlugName),tmpLeftPart,charsmax(tmpLeftPart),":"); 
+			}
+			else 
+			{
+				tmpPlugName[0] = '^0';
+			}
+		}
+		else 
+		{
+			split2(tmpLeftPart,tmpPlugName,charsmax(tmpPlugName),tmpLeftPart,charsmax(tmpLeftPart),":"); 
+		}
+		
+		new num_of_plugins = get_pluginsnum();
 		for (new i = 0; i < num_of_plugins; ++i)
 		{
-			new tmpFuncID = get_func_id(tmpFuncName,i);
+			new tmpFuncID = -1;
+			if (funcRealID == -1)
+				tmpFuncID = get_func_id(tmpFuncName,i);
+			else 
+			{
+				tmpFuncID = funcRealID;
+			}
+			new tmpPlugName2[32]
+			if (strlen(tmpPlugName) > 0)
+			{
+				get_plugin(i, tmpPlugName2, charsmax(tmpPlugName2))
+			}
+			
 			if ( tmpFuncID >= 0 )
 			{
-				callfunc_begin_i(tmpFuncID, i);
+				new callsuccess = callfunc_begin_i(tmpFuncID, i);
+				if (callsuccess != 1)
+				{				
+					log_error(AMX_ERR_NOTFOUND, "Problem with calling function (%s - %i) in plugin (%s - %i)!",tmpFuncName,tmpFuncID,tmpPlugName2,i);
+					break;
+				}
 				while(containi(tmpLeftPart,":") != -1)
 				{	
 					split2(tmpLeftPart,tmpArgType,charsmax(tmpArgType),tmpLeftPart,charsmax(tmpLeftPart),":");
@@ -181,6 +239,9 @@ public EXECUTE_COMMAND(id, const cmd[])
 					}
 				}
 				callfunc_end();
+				
+				if (funcRealID != -1)
+					break;
 			}
 		}
 	}
@@ -214,10 +275,20 @@ public CALL_MENU(id, vmenu, item)
 	menu_destroy(vmenu);
 	if (cmdid == -1)
 	{
+			#if defined DEBUG
+				new username[33];
+				get_user_name(id,username,charsmax(username));
+				log_amx("[DEBUG] User %s call empty command.", username);
+			#endif
 		CALL_CMD(id,LAST_CALLED_CMD[id] + 1);
 	}
 	else 
 	{
+			#if defined DEBUG
+				new username[33];
+				get_user_name(id,username,charsmax(username));
+				log_amx("[DEBUG] User %s call command %s.", username, g_sMenus[LAST_CALLED_CMD[id]][1][cmdid]);
+			#endif
 		EXECUTE_COMMAND(id, g_sMenus[LAST_CALLED_CMD[id]][1][cmdid]);
 	}
 	return PLUGIN_HANDLED;
