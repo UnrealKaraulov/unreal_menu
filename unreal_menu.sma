@@ -98,25 +98,36 @@ public CALL_CMD(id,cmdid)
 		
 	new vmenu = menu_create(tmpmenuitem, "CALL_MENU")
 	
+	new menu_item_count = 0;
+	
 	for(new i = 0; i < g_sMenuItemCount[cmdid - 1 ];i++)
 	{
 		if (strlen(g_sMenus[cmdid - 1][0][i]) == 0)
 		{
 			menu_addblank(vmenu,0);
+			menu_item_count++;
 		}
 		else if (g_sMenuFlags[cmdid - 1][i] == 0 || (get_user_flags(id) & g_sMenuFlags[cmdid - 1][i]))
 		{
 			num_to_str(i,tmpmenuid,charsmax(tmpmenuid));
 			menu_additem(vmenu, g_sMenus[cmdid - 1][0][i],tmpmenuid);
+			menu_item_count++;
 		}
 		else 
 		{
 			format(tmpmenuitem,charsmax(tmpmenuitem),"\d%s", g_sMenus[cmdid - 1][0][i]);
 			menu_additem(vmenu, tmpmenuitem, "-1");
+			menu_item_count++;
 		}
 	}
 	
-	menu_setprop(vmenu, MPROP_PERPAGE, 6)
+	while(menu_item_count < 7)
+	{
+		menu_addblank(vmenu,0);
+		menu_item_count++;
+	}
+	
+	menu_setprop(vmenu, MPROP_PERPAGE, 7)
 	menu_setprop(vmenu, MPROP_NEXTNAME, "Далее");
 	menu_setprop(vmenu, MPROP_BACKNAME, "Назад");
 	menu_setprop(vmenu, MPROP_EXITNAME, "Выход");
