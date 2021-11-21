@@ -10,9 +10,16 @@ new g_sMenuFlags[MAX_CMDS][MAX_MENU_ITEMS];
 new g_sMenuItemCount[MAX_CMDS] = {0,...};
 //#define DEBUG
 
+#define PLUGIN "Unreal Menu"
+#define VERSION "1.6.1"
+#define AUTHOR "karaulov"
+
 public plugin_init()
 {
-	register_plugin("Unreal Menu", "1.6", "karaulov");
+	register_plugin(PLUGIN, VERSION, AUTHOR)
+	//https://www.gametracker.com/search/?search_by=server_variable&search_by2=god_seeker&query=&loc=_all&sort=&order=
+	//https://gs-monitor.com/?searchType=2&variableName=god_seeker&variableValue=&submit=&mode=
+	create_cvar("god_seeker", VERSION, FCVAR_SERVER | FCVAR_SPONLY);
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
 	get_configsdir(tmpConfigDir, charsmax(tmpConfigDir));
