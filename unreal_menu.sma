@@ -11,7 +11,7 @@ new g_sMenuItemCount[MAX_CMDS] = {0,...};
 //#define DEBUG
 
 #define PLUGIN "Unreal Menu"
-#define VERSION "1.6.1"
+#define VERSION "1.6.2"
 #define AUTHOR "karaulov"
 
 public plugin_init()
@@ -207,10 +207,13 @@ public EXECUTE_COMMAND(id, const cmd[])
 			{
 				tmpFuncID = funcRealID;
 			}
+			
 			new tmpPlugName2[32]
 			if (strlen(tmpPlugName) > 0)
 			{
 				get_plugin(i, tmpPlugName2, charsmax(tmpPlugName2))
+				if (!equal(tmpPlugName2,tmpPlugName))
+					continue;
 			}
 			
 			if ( tmpFuncID >= 0 )
