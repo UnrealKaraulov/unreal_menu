@@ -4,6 +4,7 @@
 const MAX_CMDS = 40;
 const MAX_MENU_ITEMS = 64;
 const MAX_MENUITEM_LEN = 512;
+
 new g_sMenus[MAX_CMDS][2][MAX_MENU_ITEMS][MAX_MENUITEM_LEN];
 new g_sMenuNames[MAX_CMDS][MAX_MENUITEM_LEN];
 new g_sMenuFlags[MAX_CMDS][MAX_MENU_ITEMS];
@@ -17,8 +18,7 @@ new g_sMenuItemCount[MAX_CMDS] = {0,...};
 public plugin_init()
 {
 	register_plugin(PLUGIN, VERSION, AUTHOR)
-	//https://www.gametracker.com/search/?search_by=server_variable&search_by2=unreal_menu&query=&loc=_all&sort=&order=
-	//https://gs-monitor.com/?searchType=2&variableName=unreal_menu&variableValue=&submit=&mode=
+	
 	create_cvar("unreal_menu", VERSION, FCVAR_SERVER | FCVAR_SPONLY);
 	new tmpConfigDir[128];
 	new tmpMenuDir[128];
@@ -67,7 +67,7 @@ public plugin_init()
 			split2(szParse,g_sMenus[tmpCmdID][0][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),g_sMenus[tmpCmdID][1][g_sMenuItemCount[tmpCmdID]],charsmax(g_sMenus[][][]),"=");
 			g_sMenuItemCount[tmpCmdID]++;
 			
-			if (iLine >= MAX_MENU_ITEMS)
+			if (iLine == MAX_MENU_ITEMS)
 			{
 				log_error(AMX_ERR_PARAMS,"Items limit is exceeded. Please check ^"%s^" file",tmpFullFileName);
 				break;
@@ -77,7 +77,7 @@ public plugin_init()
 		log_amx("Menu items: %i",iLine);
 		
 		tmpCmdID++;
-		if (tmpCmdID == 32)
+		if (tmpCmdID == MAX_CMDS)
 			break;
     }   
     while(next_file(tmpDirHandle, tmpFileName, charsmax(tmpFileName)));
@@ -532,60 +532,60 @@ stock split2(const szInput[], szLeft[], sL_Max, szRight[], sR_Max, const szDelim
 
 stock bool:is_str_flag(const flagtest[])
 {
-if ( equal(flagtest, "ADMIN_ALL") ) return true;
-if ( equal(flagtest, "ADMIN_IMMUNITY") ) return true;
-if ( equal(flagtest, "ADMIN_RESERVATION") ) return true;
-if ( equal(flagtest, "ADMIN_KICK") ) return true;
-if ( equal(flagtest, "ADMIN_BAN") ) return true;
-if ( equal(flagtest, "ADMIN_SLAY") ) return true;
-if ( equal(flagtest, "ADMIN_MAP") ) return true;
-if ( equal(flagtest, "ADMIN_CVAR") ) return true;
-if ( equal(flagtest, "ADMIN_CFG") ) return true;
-if ( equal(flagtest, "ADMIN_CHAT") ) return true;
-if ( equal(flagtest, "ADMIN_VOTE") ) return true;
-if ( equal(flagtest, "ADMIN_PASSWORD") ) return true;
-if ( equal(flagtest, "ADMIN_RCON") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_A") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_B") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_C") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_D") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_E") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_F") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_G") ) return true;
-if ( equal(flagtest, "ADMIN_LEVEL_H") ) return true;
-if ( equal(flagtest, "ADMIN_MENU") ) return true;
-if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return true;
-if ( equal(flagtest, "ADMIN_ADMIN") ) return true;
-if ( equal(flagtest, "ADMIN_USER") ) return true;
-return false;
+	if ( equal(flagtest, "ADMIN_ALL") ) return true;
+	if ( equal(flagtest, "ADMIN_IMMUNITY") ) return true;
+	if ( equal(flagtest, "ADMIN_RESERVATION") ) return true;
+	if ( equal(flagtest, "ADMIN_KICK") ) return true;
+	if ( equal(flagtest, "ADMIN_BAN") ) return true;
+	if ( equal(flagtest, "ADMIN_SLAY") ) return true;
+	if ( equal(flagtest, "ADMIN_MAP") ) return true;
+	if ( equal(flagtest, "ADMIN_CVAR") ) return true;
+	if ( equal(flagtest, "ADMIN_CFG") ) return true;
+	if ( equal(flagtest, "ADMIN_CHAT") ) return true;
+	if ( equal(flagtest, "ADMIN_VOTE") ) return true;
+	if ( equal(flagtest, "ADMIN_PASSWORD") ) return true;
+	if ( equal(flagtest, "ADMIN_RCON") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_A") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_B") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_C") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_D") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_E") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_F") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_G") ) return true;
+	if ( equal(flagtest, "ADMIN_LEVEL_H") ) return true;
+	if ( equal(flagtest, "ADMIN_MENU") ) return true;
+	if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return true;
+	if ( equal(flagtest, "ADMIN_ADMIN") ) return true;
+	if ( equal(flagtest, "ADMIN_USER") ) return true;
+	return false;
 }
 
 stock str_to_flag(const flagtest[])
 {
-if ( equal(flagtest, "ADMIN_ALL") ) return 0;
-if ( equal(flagtest, "ADMIN_IMMUNITY") ) return (1<<0);
-if ( equal(flagtest, "ADMIN_RESERVATION") ) return (1<<1);
-if ( equal(flagtest, "ADMIN_KICK") ) return (1<<2);
-if ( equal(flagtest, "ADMIN_BAN") ) return (1<<3);
-if ( equal(flagtest, "ADMIN_SLAY") ) return (1<<4);
-if ( equal(flagtest, "ADMIN_MAP") ) return (1<<5);
-if ( equal(flagtest, "ADMIN_CVAR") ) return (1<<6);
-if ( equal(flagtest, "ADMIN_CFG") ) return (1<<7);
-if ( equal(flagtest, "ADMIN_CHAT") ) return (1<<8);
-if ( equal(flagtest, "ADMIN_VOTE") ) return (1<<9);
-if ( equal(flagtest, "ADMIN_PASSWORD") ) return (1<<10);
-if ( equal(flagtest, "ADMIN_RCON") ) return (1<<11);
-if ( equal(flagtest, "ADMIN_LEVEL_A") ) return (1<<12);
-if ( equal(flagtest, "ADMIN_LEVEL_B") ) return (1<<13);
-if ( equal(flagtest, "ADMIN_LEVEL_C") ) return (1<<14);
-if ( equal(flagtest, "ADMIN_LEVEL_D") ) return (1<<15);
-if ( equal(flagtest, "ADMIN_LEVEL_E") ) return (1<<16);
-if ( equal(flagtest, "ADMIN_LEVEL_F") ) return (1<<17);
-if ( equal(flagtest, "ADMIN_LEVEL_G") ) return (1<<18);
-if ( equal(flagtest, "ADMIN_LEVEL_H") ) return (1<<19);
-if ( equal(flagtest, "ADMIN_MENU") ) return (1<<20);
-if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return (1<<21);
-if ( equal(flagtest, "ADMIN_ADMIN") ) return (1<<24);
-if ( equal(flagtest, "ADMIN_USER") ) return (1<<25);
-return 0;
+	if ( equal(flagtest, "ADMIN_ALL") ) return 0;
+	if ( equal(flagtest, "ADMIN_IMMUNITY") ) return (1<<0);
+	if ( equal(flagtest, "ADMIN_RESERVATION") ) return (1<<1);
+	if ( equal(flagtest, "ADMIN_KICK") ) return (1<<2);
+	if ( equal(flagtest, "ADMIN_BAN") ) return (1<<3);
+	if ( equal(flagtest, "ADMIN_SLAY") ) return (1<<4);
+	if ( equal(flagtest, "ADMIN_MAP") ) return (1<<5);
+	if ( equal(flagtest, "ADMIN_CVAR") ) return (1<<6);
+	if ( equal(flagtest, "ADMIN_CFG") ) return (1<<7);
+	if ( equal(flagtest, "ADMIN_CHAT") ) return (1<<8);
+	if ( equal(flagtest, "ADMIN_VOTE") ) return (1<<9);
+	if ( equal(flagtest, "ADMIN_PASSWORD") ) return (1<<10);
+	if ( equal(flagtest, "ADMIN_RCON") ) return (1<<11);
+	if ( equal(flagtest, "ADMIN_LEVEL_A") ) return (1<<12);
+	if ( equal(flagtest, "ADMIN_LEVEL_B") ) return (1<<13);
+	if ( equal(flagtest, "ADMIN_LEVEL_C") ) return (1<<14);
+	if ( equal(flagtest, "ADMIN_LEVEL_D") ) return (1<<15);
+	if ( equal(flagtest, "ADMIN_LEVEL_E") ) return (1<<16);
+	if ( equal(flagtest, "ADMIN_LEVEL_F") ) return (1<<17);
+	if ( equal(flagtest, "ADMIN_LEVEL_G") ) return (1<<18);
+	if ( equal(flagtest, "ADMIN_LEVEL_H") ) return (1<<19);
+	if ( equal(flagtest, "ADMIN_MENU") ) return (1<<20);
+	if ( equal(flagtest, "ADMIN_BAN_TEMP") ) return (1<<21);
+	if ( equal(flagtest, "ADMIN_ADMIN") ) return (1<<24);
+	if ( equal(flagtest, "ADMIN_USER") ) return (1<<25);
+	return 0;
 }
